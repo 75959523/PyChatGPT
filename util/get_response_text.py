@@ -5,7 +5,7 @@ import re
 def execute(result):
     response_text = ""
     for data in data_splitter(result):
-        if data != " [DONE]":
+        if data != " [DONE]\n\n":
             response_text += extract_response_text(data)
     return response_text
 

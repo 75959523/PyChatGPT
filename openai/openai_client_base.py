@@ -2,7 +2,7 @@ import requests
 import logging
 import json
 
-API_KEY = "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"
+API_KEY = ""
 TARGET_URL_CHAT = "https://api.openai.com/v1/chat/completions"
 TARGET_URL_MODEL = "https://api.openai.com/v1/models"
 TARGET_URL_IMAGE = "https://api.openai.com/v1/images/generations"
@@ -25,6 +25,13 @@ def execute(request_param, request_type, target_url):
             response = requests.get(target_url, headers=headers, params=python_obj)
         else:
             response = requests.post(target_url, headers=headers, json=python_obj)
+
+        # Add check for response status code
+        response.raise_for_status()
+
+    except requests.exceptions.HTTPError as http_err:
+        logger.error(f"HTTP error occurred: {http_err}")
+        return "500"
 
     except Exception as e:
         logger.error("请求OpenAI异常: %s" % e)
