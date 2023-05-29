@@ -1,23 +1,24 @@
 import json
-from entity.image_request_data import ImageRequestData
 
 
 def model(request):
     return request[request.rfind("model") + 8:request.rfind("stream") - 3]
 
 
-def message_list(request):
-    request_msg = request[request.index("messages") + 10:request.rfind("model") - 2]
+def get_message_list(request):
+    request_msg = request[request.find("messages") + 10: request.rfind("model") - 2]
     return string_to_list(request_msg)
 
 
 def string_to_list(request_msg):
-    message_array = json.loads(request_msg)
-    message_list_ = []
-    for map_ in message_array:
-        converted_map = {str(key): str(value) for key, value in map_.items()}
-        message_list_.append(converted_map)
-    return message_list_
+    json_array = json.loads(request_msg)
+    message_list = []
+    for map_item in json_array:
+        converted_map = {}
+        for key in map_item:
+            converted_map[str(key)] = str(map_item[key])
+        message_list.append(converted_map)
+    return message_list
 
 
 def question(request):
@@ -40,5 +41,5 @@ def extract_substring(param):
 
 
 def image_prepare_request_body(param):
-    data = ImageRequestData(param, 2, "1024x1024")
-    return json.dumps(data.__dict__, ensure_ascii=False).replace("\\", "")
+    data = {"prompt": param, "n": 2, "size": "1024x1024"}
+    return json.dumps(data, ensure_ascii=False)

@@ -1,20 +1,13 @@
-import logging
 import threading
 
 from flask import Response, json
 
 from util import format_time_elapsed, add_msg_to_response, get_request_method, get_response_method, get_user_info, \
     redis_service, database_service
-from token_ import token_counter
+from token_computation import token_counter
 from util.logger_config import setup_logger
-from util.time_formatter import handler
 
-logger = logging.getLogger("user_info_service")
-logger.handlers.clear()
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
-
-logger = setup_logger("user_info_service", "app.log")
+logger = setup_logger("user_info_service", "log/app.log")
 
 
 def handle_result(request, param, result_and_begin):

@@ -1,21 +1,14 @@
 import requests
-import logging
 import json
 
 from util.logger_config import setup_logger
-from util.time_formatter import handler
 
 API_KEY = ""
 TARGET_URL_CHAT = "https://api.openai.com/v1/chat/completions"
 TARGET_URL_IMAGE = "https://api.openai.com/v1/images/generations"
 
-logger = logging.getLogger("openai_client_base")
-logger.handlers.clear()
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
 
-logger = setup_logger("openai_client_base", "app.log")
-
+logger = setup_logger("openai_client_base", "log/app.log")
 
 
 def execute(request_param, request_type, target_url):

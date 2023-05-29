@@ -1,21 +1,14 @@
-import logging
-
 from flask import Flask, request
 from flask_cors import CORS
 
 from openai_service import chat_request, image_request
 from user_info_service import handle_result, handle_image_result, get_user_info_from_db
-from util.time_formatter import handler
 from util.logger_config import setup_logger
 
 app = Flask(__name__)
 CORS(app)
 
-logger = logging.getLogger("app")
-logger.handlers.clear()
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
-logger = setup_logger("app", "app.log")
+logger = setup_logger("app", "log/app.log")
 
 
 @app.route("/api/chat", methods=["POST"])

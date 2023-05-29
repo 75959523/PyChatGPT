@@ -1,7 +1,25 @@
 import logging
+import pytz
 from logging.handlers import RotatingFileHandler
+from datetime import datetime
 
-from util.time_formatter import formatter
+
+class TimeFormatter(logging.Formatter):
+    converter = pytz.timezone("Asia/Shanghai")
+
+    def formatTime(self, record, dateformat=None):
+        dt = datetime.fromtimestamp(record.created, self.converter)
+        if dateformat:
+            s = dt.strftime(dateformat)
+        else:
+            try:
+                s = dt.isoformat(timespec="milliseconds")
+            except TypeError:
+                s = dt.isoformat()
+        return s
+
+
+formatter = TimeFormatter(fmt="%(asctime)s %(name)-15s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
 
 def setup_logger(name, log_file, max_bytes=1024 * 1024, backup_count=100):
@@ -21,8 +39,12 @@ def setup_logger(name, log_file, max_bytes=1024 * 1024, backup_count=100):
     handler = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
     handler.setFormatter(formatter)
 
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+
     logger = logging.getLogger(name)
     logger.addHandler(handler)
+    logger.addHandler(console_handler)
     logger.setLevel(logging.INFO)
 
     return logger
