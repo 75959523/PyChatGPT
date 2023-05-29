@@ -1,5 +1,4 @@
 import json
-import re
 
 
 def execute(result):
@@ -28,6 +27,7 @@ def extract_response_text(data):
     return response_text
 
 
-def extract_content(input_str):
-    contents = re.findall(r'"content":"([^"]*)"', input_str)
-    return "".join(contents)
+def extract_urls_from_json(image_string):
+    json_obj = json.loads(image_string)
+    data_list = json_obj.get("data", [])
+    return [data.get("url") for data in data_list]

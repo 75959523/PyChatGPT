@@ -2,17 +2,24 @@ import requests
 import logging
 import json
 
+from util.logger_config import setup_logger
+from util.time_formatter import handler
+
 API_KEY = ""
 TARGET_URL_CHAT = "https://api.openai.com/v1/chat/completions"
-TARGET_URL_MODEL = "https://api.openai.com/v1/models"
 TARGET_URL_IMAGE = "https://api.openai.com/v1/images/generations"
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("openai_client_base")
+logger.handlers.clear()
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+
+logger = setup_logger("openai_client_base", "app.log")
+
 
 
 def execute(request_param, request_type, target_url):
-    logger.info("请求参数: %s" % request_param)
+    logger.info("request: %s" % request_param)
     python_obj = json.loads(request_param)
 
     try:
@@ -21,7 +28,7 @@ def execute(request_param, request_type, target_url):
             "Authorization": "Bearer " + API_KEY
         }
 
-        if request_type.upper() == 'GET':
+        if request_type.upper() == "GET":
             response = requests.get(target_url, headers=headers, params=python_obj)
         else:
             response = requests.post(target_url, headers=headers, json=python_obj)
@@ -34,7 +41,7 @@ def execute(request_param, request_type, target_url):
         return "500"
 
     except Exception as e:
-        logger.error("请求OpenAI异常: %s" % e)
+        logger.error("Request OpenAI Exceptions: %s" % e)
         return "500"
 
-    return response.content.decode('utf-8')
+    return response.content.decode("utf-8")
