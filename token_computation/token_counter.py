@@ -1,3 +1,5 @@
+import json
+
 from util import get_response_method, format_cost, get_request_method
 from token_computation import tiktokens_util
 from util.logger_config import setup_logger
@@ -7,24 +9,24 @@ logger = setup_logger("token_counter", "log/app.log")
 
 def sum_token(request, result, time_param):
     model = get_request_method.model(request)
-    message_list = get_request_method.get_message_list(request)
-
     response_text = get_response_method.execute(result)
     logger.info(f"request content: {get_request_method.question(request)}")
     logger.info(f"response content: {response_text}")
+    obj = json.loads(request)
+    flag = obj["flag"]
+    if flag == "OpenAI":
+        return build_statistics_message_openai(time_param, model)
 
+    message_list = get_request_method.get_message_list(request)
     prompt = tiktokens_util.num_tokens_from_messages(message_list, model)
     completion = tiktokens_util.num_tokens_from_string(response_text)
-    msg = build_statistics_message(time_param, model, prompt, completion)
 
-    logger.info(msg.replace("\n\n", ""))
-    return msg
+    return build_statistics_message(time_param, model, prompt, completion)
 
 
 def build_statistics_message(time_param, model, prompt, completion):
     token = prompt + completion
-
-    return (
+    msg = (
         "\n\n"
         f"Time-consuming to request OpenAI: {time_param} s"
         f", model: {model}"
@@ -34,6 +36,18 @@ def build_statistics_message(time_param, model, prompt, completion):
         f", request cost: {request_cost(prompt, model)}"
         f", response cost: {response_cost(completion, model)}"
     )
+    logger.info(msg.replace("\n\n", ""))
+    return msg
+
+
+def build_statistics_message_openai(time_param, model):
+    msg = (
+        "\n\n"
+        f"Time-consuming to request OpenAI: {time_param} s"
+        f", model: {model}"
+    )
+    logger.info(msg.replace("\n\n", ""))
+    return msg
 
 
 def request_cost(token_num, model):

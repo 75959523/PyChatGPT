@@ -41,5 +41,5 @@ def extract_substring(param):
 
 
 def image_prepare_request_body(param):
-    data = {"prompt": param, "n": 2, "size": "1024x1024"}
+    data = {"prompt": param, "n": 2, "size": "1024x1024", "flag": "API"}
     return json.dumps(data, ensure_ascii=False)
