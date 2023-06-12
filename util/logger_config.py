@@ -1,6 +1,6 @@
 import logging
 import pytz
-from logging.handlers import RotatingFileHandler
+from concurrent_log_handler import ConcurrentRotatingFileHandler
 from datetime import datetime
 
 
@@ -22,7 +22,7 @@ class TimeFormatter(logging.Formatter):
 formatter = TimeFormatter(fmt="%(asctime)s %(name)-15s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
 
-def setup_logger(name, log_file, max_bytes=1024 * 1024, backup_count=100):
+def setup_logger(name, log_file, max_bytes=1024 * 1024 * 0.5, backup_count=100):
     """Set up a logger that writes to a specified file.
 
     Args:
@@ -36,7 +36,7 @@ def setup_logger(name, log_file, max_bytes=1024 * 1024, backup_count=100):
     logger (logging.Logger): Configured logger.
     """
 
-    handler = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
+    handler = ConcurrentRotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
     handler.setFormatter(formatter)
 
     console_handler = logging.StreamHandler()

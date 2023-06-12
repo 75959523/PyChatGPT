@@ -17,50 +17,35 @@ def execute(request_param, request_type, target_url):
     flag = python_obj["flag"]
     python_obj.pop("flag")
     if flag == "API":
-        try:
-            headers = {
-                "Content-Type": "application/json; charset=UTF-8",
-                "Authorization": "Bearer " + API_KEY
-            }
-
-            if request_type.upper() == "GET":
-                response = requests.get(target_url, headers=headers, params=python_obj)
-            else:
-                response = requests.post(target_url, headers=headers, json=python_obj)
-
-            # Add check for response status code
-            response.raise_for_status()
-
-        except requests.exceptions.HTTPError as http_err:
-            logger.error(f"HTTP error occurred: {http_err}")
-            return "500"
-
-        except Exception as e:
-            logger.error("Request OpenAI Exceptions: %s" % e)
-            return "500"
-
-        return response.content.decode("utf-8")
+        headers = {
+            "Content-Type": "application/json; charset=UTF-8",
+            "Authorization": "Bearer " + API_KEY
+        }
+        return do_request(python_obj, request_type, target_url, headers)
 
     elif flag == "OpenAI":
-        try:
-            headers = {
-                "Content-Type": "application/json; charset=UTF-8",
-            }
+        headers = {
+            "Content-Type": "application/json; charset=UTF-8",
+        }
+        return do_request(python_obj, request_type, target_url, headers)
 
-            if request_type.upper() == "GET":
-                response = requests.get(target_url, headers=headers, params=python_obj)
-            else:
-                response = requests.post(target_url, headers=headers, json=python_obj)
 
-            # Add check for response status code
-            response.raise_for_status()
+def do_request(python_obj, request_type, target_url, headers):
+    try:
+        if request_type.upper() == "GET":
+            response = requests.get(target_url, headers=headers, params=python_obj)
+        else:
+            response = requests.post(target_url, headers=headers, json=python_obj)
 
-        except requests.exceptions.HTTPError as http_err:
-            logger.error(f"HTTP error occurred: {http_err}")
-            return "500"
+        # Add check for response status code
+        response.raise_for_status()
 
-        except Exception as e:
-            logger.error("Request OpenAI Exceptions: %s" % e)
-            return "500"
+    except requests.exceptions.HTTPError as http_err:
+        logger.error(f"HTTP error occurred: {http_err}")
+        return str(http_err), "500"
 
-        return response.content.decode("utf-8")
+    except Exception as e:
+        logger.error("Request OpenAI Exceptions: %s" % e)
+        return str(e), "500"
+
+    return response.content.decode("utf-8"), "200"

@@ -10,22 +10,22 @@ from util.logger_config import setup_logger
 logger = setup_logger("user_info_service", "log/app.log")
 
 
-def handle_result(request, param, result_and_begin):
-    result, begin = result_and_begin
-    if result != "500":
-        time_elapsed = format_time_elapsed.execute(begin)
-        # token computation
-        msg = token_counter.sum_token(param, result, time_elapsed)
-        request = get_ip_and_header(request)
-        # Collection of user information
-        threading.Thread(target=get_user_info.execute, args=(request, param, result, None, msg)).start()
-        result = add_msg_to_response.execute(result, msg)
-        return result
-    return "Server error", 500
+def handle_result(request, param, data_and_time):
+    data, begin = data_and_time
+    result, code = data
+    time_elapsed = format_time_elapsed.execute(begin)
+    # token computation
+    msg = token_counter.sum_token(param, result, time_elapsed)
+    request = get_ip_and_header(request)
+    # Collection of user information
+    threading.Thread(target=get_user_info.execute, args=(request, param, result, None, msg)).start()
+    result = add_msg_to_response.execute(result, msg)
+    return result
 
 
 def handle_image_result(request, result_and_substring):
-    result, substring = result_and_substring
+    data, substring = result_and_substring
+    result, code = data
     urls = get_response_method.extract_urls_from_json(result)
     request = get_ip_and_header(request)
     # Collection of user information

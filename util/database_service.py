@@ -62,6 +62,8 @@ class DatabaseService:
 
     def get_user_info(self):
         self.cursor.execute("""
+        SELECT * FROM 
+        (
             SELECT 
             u.question, 
             u.answer, 
@@ -78,12 +80,13 @@ class DatabaseService:
             i.isp, 
             i.org, 
             i.as1, 
-            u.create_time  
+            u.create_time,
+            ROW_NUMBER() over ( ORDER BY id DESC ) rn 
             FROM 
             user_info u 
-            LEFT JOIN ip_info i ON ( u.uuid = i.uuid )  
-            ORDER BY 
-            u.id DESC
+            LEFT JOIN ip_info i ON ( u.uuid = i.uuid ) 
+            ) t 
+            WHERE t.rn <= 100
         """)
         columns = [column[0] for column in self.cursor.description]
         return [dict(zip(columns, row)) for row in self.cursor.fetchall()]
