@@ -14,7 +14,7 @@ def sum_token(request, result, time_param):
     logger.info(f"response content: {response_text}")
     obj = json.loads(request)
     flag = obj["flag"]
-    if flag == "OpenAI":
+    if flag == "OpenAI" or flag == "OpenAI-SB":
         return build_statistics_message_openai(time_param, model)
 
     message_list = get_request_method.get_message_list(request)
@@ -52,17 +52,17 @@ def build_statistics_message_openai(time_param, model):
 
 def request_cost(token_num, model):
     cost = 0
-    if model == "gpt-3.5-turbo":
+    if model == "gpt-3.5-turbo" or model == "gpt-3.5-turbo-0613":
         cost = token_num * 0.001 * 0.002
-    elif model == "gpt-4":
+    elif model == "gpt-4" or model == "gpt-4-0613":
         cost = token_num * 0.001 * 0.03
     return format_cost.execute(cost)
 
 
 def response_cost(token_num, model):
     cost = 0
-    if model == "gpt-3.5-turbo":
+    if model == "gpt-3.5-turbo" or model == "gpt-3.5-turbo-0613":
         cost = token_num * 0.001 * 0.002
-    elif model == "gpt-4":
+    elif model == "gpt-4" or model == "gpt-4-0613":
         cost = token_num * 0.001 * 0.06
     return format_cost.execute(cost)

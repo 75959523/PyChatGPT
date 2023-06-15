@@ -5,6 +5,10 @@ def model(request):
     return request[request.rfind("model") + 8:request.rfind("stream") - 3]
 
 
+def flag(request):
+    return request[request.rfind("flag") + 7:request.rfind("}") - 1]
+
+
 def get_message_list(request):
     request_msg = request[request.find("messages") + 10: request.rfind("model") - 2]
     return string_to_list(request_msg)

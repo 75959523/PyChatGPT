@@ -4,7 +4,9 @@ import json
 from util.logger_config import setup_logger
 
 API_KEY = ""
+API_KEY_SB = ""
 TARGET_URL_CHAT_OPENAI = ""
+TARGET_URL_CHAT_OPENAI_SB = "https://api.openai-sb.com/v1/chat/completions"
 TARGET_URL_CHAT_API = "https://api.openai.com/v1/chat/completions"
 TARGET_URL_IMAGE = "https://api.openai.com/v1/images/generations"
 
@@ -26,6 +28,14 @@ def execute(request_param, request_type, target_url):
     elif flag == "OpenAI":
         headers = {
             "Content-Type": "application/json; charset=UTF-8",
+        }
+        return do_request(python_obj, request_type, target_url, headers)
+
+    elif flag == "OpenAI-SB":
+        headers = {
+            "Content-Type": "application/json; charset=UTF-8",
+            "Authorization": "Bearer " + API_KEY_SB
+
         }
         return do_request(python_obj, request_type, target_url, headers)
 

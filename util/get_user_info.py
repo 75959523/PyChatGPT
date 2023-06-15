@@ -42,7 +42,7 @@ def execute(request, param, result, url_arr, msg):
     if result:
         user_info["question"] = get_request_method.question(param)
         user_info["answer"] = get_response_method.execute(result)
-        user_info["model"] = get_request_method.model(param)
+        user_info["model"] = get_request_method.model(param) + " " + get_request_method.flag(param)
         user_info["msg"] = msg.replace("\n\n", "")
         db_service.add_user_info(user_info)
 
