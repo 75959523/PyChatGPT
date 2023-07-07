@@ -22,7 +22,7 @@ class TimeFormatter(logging.Formatter):
 formatter = TimeFormatter(fmt="%(asctime)s %(name)-15s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
 
-def setup_logger(name, log_file, max_bytes=1024 * 1024, backup_count=100):
+def setup_logger(name, log_file, max_bytes=1024 * 1024 * 0.3, backup_count=100):
     """Set up a logger that writes to a specified file.
 
     Args:

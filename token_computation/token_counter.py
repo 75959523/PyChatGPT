@@ -15,13 +15,14 @@ def sum_token(request, result, time_param):
     obj = json.loads(request)
     flag = obj["flag"]
     if flag == "OpenAI" or flag == "OpenAI-SB":
-        return build_statistics_message_openai(time_param, model)
+        return build_statistics_message_openai(time_param)
 
     message_list = get_request_method.get_message_list(request)
     prompt = tiktokens_util.num_tokens_from_messages(message_list, model)
     completion = tiktokens_util.num_tokens_from_string(response_text)
 
-    return build_statistics_message(time_param, model, prompt, completion)
+    if flag == "API":
+        return build_statistics_message(time_param, model, prompt, completion)
 
 
 def build_statistics_message(time_param, model, prompt, completion):
@@ -40,11 +41,10 @@ def build_statistics_message(time_param, model, prompt, completion):
     return msg
 
 
-def build_statistics_message_openai(time_param, model):
+def build_statistics_message_openai(time_param):
     msg = (
         "\n\n"
         f"Time-consuming to request OpenAI: {time_param} s"
-        f", model: {model}"
     )
     logger.info(msg.replace("\n\n", ""))
     return msg
