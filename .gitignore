@@ -1,6 +1,5 @@
 *.pyc
 .DS_Store
 .idea
-*.txt
 *.log
 *.lock
